@@ -1,0 +1,6 @@
+{
+  "extends": "./tscondif.json",
+  "exclude": [
+    "tests"
+  ]
+}
