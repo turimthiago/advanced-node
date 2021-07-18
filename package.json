@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "test": "jest --passWithNoTests --no-cache --runInBand",
-    "test:staged": "npmm run test -- --findRelatedTests",
+    "test:staged": "npm run test -- --findRelatedTests",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage",
     "prepare": "husky install"

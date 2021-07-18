@@ -2,5 +2,11 @@
   "extends": "standard-with-typescript",
   "parserOptions": {
     "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/member-delimiter-style": "off",
+    "@typescript-eslint/semi": "off",
+    "@typescript-eslint/no-namespace": "off",
+    "semi": [1, "always"]
   }
 }
