@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AuthenticationError } from '@/domain/errors';
 import { FacebookAuthenticationService } from '@/data/services';
 import { mock, MockProxy } from 'jest-mock-extended';
@@ -14,7 +13,6 @@ describe('Facebook AuthenticationService', () => {
   });
 
   it('should call LoadFacebookUserApi with correct values', async () => {
-    const sut = new FacebookAuthenticationService(loadFacebookUserApi);
     await sut.perform({ token: 'any_token' });
     expect(loadFacebookUserApi.loadUser).toHaveBeenCalledWith({ token: 'any_token' });
     expect(loadFacebookUserApi.loadUser).toHaveBeenCalledTimes(1);
@@ -22,7 +20,6 @@ describe('Facebook AuthenticationService', () => {
 
   it('should return AuthenticationError when LoadFacebookUserApi returns undefined', async () => {
     loadFacebookUserApi.loadUser.mockResolvedValueOnce(undefined);
-    const sut = new FacebookAuthenticationService(loadFacebookUserApi);
     const authResult = await sut.perform({ token: 'any_token' });
     expect(authResult).toEqual(new AuthenticationError());
   });
