@@ -2,7 +2,7 @@ import { AcessToken } from '@/domain/models';
 import { AuthenticationError } from '@/domain/errors';
 
 export interface FacebookAuthentication {
-  perform: (token: string) => AcessToken | AuthenticationError;
+  perform: (params: FacebookAuthentication.Params) => Promise<void>;
 }
 
 export namespace FacebookAuthentication{

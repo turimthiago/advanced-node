@@ -1,5 +1,5 @@
 {
-  "extends": "./tscondif.json",
+  "extends": "./tsconfig.json",
   "exclude": [
     "tests"
   ]
