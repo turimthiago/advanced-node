@@ -10,7 +10,7 @@ export class FacebookAuthenticationService implements FacebookAuthentication {
   async perform (params: FacebookAuthentication.Params): Promise<AuthenticationError> {
     const fbData = await this.facebookApi.loadUser(params);
     if (fbData != null) {
-      await this.userAccountRepository.load({ email: fbData?.email });
+      await this.userAccountRepository.load({ email: fbData.email });
       await this.userAccountRepository.createFromFacebook(fbData);
     }
     return new AuthenticationError();
