@@ -75,7 +75,8 @@ describe('Facebook AuthenticationService', () => {
 
   it('should update account name', async () => {
     userAccountRepository.load.mockResolvedValueOnce({
-      id: 'any_id'
+      id: 'any_id',
+      name: 'any_fb_name'
     });
     await sut.perform(token);
     expect(userAccountRepository.saveWithFacebook).toHaveBeenCalledWith({
