@@ -5,16 +5,16 @@ import { CreateFacebookAccountRepository, LoadUserAccountRepository, UpdateFaceb
 
 export class FacebookAuthenticationService implements FacebookAuthentication {
   constructor (private readonly facebookApi: LoadFacebookUserApi,
-    private readonly userAccountRepository: LoadUserAccountRepository & CreateFacebookAccountRepository & UpdateFacebookAccountRepository) {}
+    private readonly userAccountRepository: LoadUserAccountRepository & CreateFacebookAccountRepository & UpdateFacebookAccountRepository) { }
 
   async perform (params: FacebookAuthentication.Params): Promise<AuthenticationError> {
     const fbData = await this.facebookApi.loadUser(params);
-    if (fbData != null) {
+    if (fbData !== undefined) {
       const accountData = await this.userAccountRepository.load({ email: fbData.email });
-      if (accountData?.name !== undefined) {
+      if (accountData !== undefined) {
         await this.userAccountRepository.updateWithFacebook({
           id: accountData.id,
-          name: accountData.name,
+          name: accountData.name ?? fbData.name,
           facebookId: fbData.facebookId
         });
       } else {
