@@ -1,10 +1,12 @@
-
 interface FacebookData {
-  name: string, email: string, facebookId: string
+  name: string;
+  email: string;
+  facebookId: string;
 }
 
 interface AccountData {
-  id?: string, name?: string
+  id?: string;
+  name?: string;
 }
 
 export class FacebookAccount {
@@ -13,7 +15,7 @@ export class FacebookAccount {
   email: string;
   facebookId: string;
 
-  constructor (fbData: FacebookData, accountData?: AccountData) {
+  constructor(fbData: FacebookData, accountData?: AccountData) {
     this.id = accountData?.id;
     this.name = accountData?.name ?? fbData.name;
     this.email = fbData.email;
