@@ -1,5 +1,5 @@
-import { AcessToken } from "@/domain/models";
 import { AuthenticationError } from "@/domain/errors";
+import { AccessToken } from "../models";
 
 export interface FacebookAuthentication {
   perform: (
@@ -12,5 +12,5 @@ export namespace FacebookAuthentication {
     token: string;
   }
 
-  export type Result = AcessToken | AuthenticationError;
+  export type Result = AccessToken | AuthenticationError;
 }

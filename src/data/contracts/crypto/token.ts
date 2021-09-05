@@ -10,5 +10,5 @@ export namespace TockenGenerator {
     expirationInMs: number
   }
 
-  export type Result = undefined;
+  export type Result = string;
 }
