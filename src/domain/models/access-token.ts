@@ -1,3 +1,3 @@
-export interface AcessToken {
-  acessToken: string;
+export class AccessToken {
+  constructor(private readonly value: string) { }
 }
