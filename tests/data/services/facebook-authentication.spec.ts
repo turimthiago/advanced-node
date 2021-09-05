@@ -90,4 +90,28 @@ describe("Facebook AuthenticationService", () => {
     const authResult = await sut.perform(token);
     expect(authResult).toEqual(new AccessToken('any_generated_token'))
   });
+
+  it("should retrow if LoadFacebookApi throws", async () => {
+    facebookApi.loadUser.mockRejectedValueOnce(new Error('Facebook Error'));
+    const promise = sut.perform(token);
+    await expect(promise).rejects.toThrow(new Error('Facebook Error'));
+  });
+
+  it("should retrow if LoadUserAccountRepository throws", async () => {
+    userAccountRepository.load.mockRejectedValueOnce(new Error('Load Error'));
+    const promise = sut.perform(token);
+    await expect(promise).rejects.toThrow(new Error('Load Error'));
+  });
+
+  it("should retrow if SaveFacebookAccountRepository throws", async () => {
+    userAccountRepository.saveWithFacebook.mockRejectedValueOnce(new Error('Save Error'));
+    const promise = sut.perform(token);
+    await expect(promise).rejects.toThrow(new Error('Save Error'));
+  });
+
+  it("should retrow if GeneratorToken throws", async () => {
+    crypto.generateToken.mockRejectedValueOnce(new Error('GeneratorToken Error'));
+    const promise = sut.perform(token);
+    await expect(promise).rejects.toThrow(new Error('GeneratorToken Error'));
+  });
 });
