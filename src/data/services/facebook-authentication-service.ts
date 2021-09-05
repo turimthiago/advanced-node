@@ -7,6 +7,7 @@ import {
 } from '@/data/repos'
 import { FacebookAccount } from '@/domain/models/facebook-account'
 import { TockenGenerator } from '../contracts/crypto'
+import { AccessToken } from '@/domain/models'
 
 export class FacebookAuthenticationService implements FacebookAuthentication {
   constructor(
@@ -28,7 +29,7 @@ export class FacebookAuthenticationService implements FacebookAuthentication {
       const { id } = await this.userAccountRepository.saveWithFacebook(
         facebookAccount
       )
-      await this.crypto.generateToken({ key: id })
+      await this.crypto.generateToken({ key: id, expirationInMs: AccessToken.expirationInMs })
     }
     return new AuthenticationError()
   }

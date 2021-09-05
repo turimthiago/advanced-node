@@ -6,7 +6,7 @@ import {
   SaveFacebookAccountRepository,
   LoadUserAccountRepository,
 } from "@/data/repos";
-import { FacebookAccount } from "@/domain/models";
+import { AccessToken, FacebookAccount } from "@/domain/models";
 
 import { mocked } from "ts-jest/utils";
 import { TockenGenerator } from "../contracts/crypto";
@@ -80,6 +80,7 @@ describe("Facebook AuthenticationService", () => {
     await sut.perform(token);
     expect(crypto.generateToken).toHaveBeenCalledWith({
       key: "any_account_id",
+      expirationInMs: AccessToken.expirationInMs
     });
     expect(crypto.generateToken).toHaveBeenCalledTimes(1);
   });

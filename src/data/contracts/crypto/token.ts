@@ -7,6 +7,7 @@ export interface TockenGenerator {
 export namespace TockenGenerator {
   export interface Params {
     key: string;
+    expirationInMs: number
   }
 
   export type Result = undefined;
