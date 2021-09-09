@@ -1,13 +1,13 @@
-import { FacebookAuthentication } from '@/domain/features'
-import { LoadFacebookUserApi } from '@/data/contracts/apis/facebook'
-import { AuthenticationError } from '@/domain/errors'
+import { FacebookAuthentication } from '@/domain/features';
+import { LoadFacebookUserApi } from '@/data/contracts/apis/facebook';
+import { AuthenticationError } from '@/domain/errors';
 import {
   SaveFacebookAccountRepository,
   LoadUserAccountRepository
-} from '@/data/repos'
-import { FacebookAccount } from '@/domain/models/facebook-account'
-import { TockenGenerator } from '../contracts/crypto'
-import { AccessToken } from '@/domain/models'
+} from '@/data/repos';
+import { FacebookAccount } from '@/domain/models/facebook-account';
+import { TockenGenerator } from '../contracts/crypto';
+import { AccessToken } from '@/domain/models';
 
 export class FacebookAuthenticationService implements FacebookAuthentication {
   constructor(
@@ -15,23 +15,26 @@ export class FacebookAuthenticationService implements FacebookAuthentication {
     private readonly userAccountRepository: LoadUserAccountRepository &
       SaveFacebookAccountRepository,
     private readonly crypto: TockenGenerator
-  ) { }
+  ) {}
 
   async perform(
     params: FacebookAuthentication.Params
   ): Promise<FacebookAuthentication.Result> {
-    const fbData = await this.facebookApi.loadUser(params)
+    const fbData = await this.facebookApi.loadUser(params);
     if (fbData !== undefined) {
       const accountData = await this.userAccountRepository.load({
         email: fbData.email
-      })
-      const facebookAccount = new FacebookAccount(fbData, accountData)
+      });
+      const facebookAccount = new FacebookAccount(fbData, accountData);
       const { id } = await this.userAccountRepository.saveWithFacebook(
         facebookAccount
-      )
-      const token = await this.crypto.generateToken({ key: id, expirationInMs: AccessToken.expirationInMs })
+      );
+      const token = await this.crypto.generateToken({
+        key: id,
+        expirationInMs: AccessToken.expirationInMs
+      });
       return new AccessToken(token);
     }
-    return new AuthenticationError()
+    return new AuthenticationError();
   }
 }

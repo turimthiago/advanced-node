@@ -1,6 +1,6 @@
 export class AuthenticationError extends Error {
   constructor() {
-    super("Authentication fails");
-    this.name = "AuthenticationError";
+    super('Authentication fails');
+    this.name = 'AuthenticationError';
   }
 }

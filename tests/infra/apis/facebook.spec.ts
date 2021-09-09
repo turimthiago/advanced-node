@@ -1,6 +1,6 @@
-import { mock, MockProxy } from "jest-mock-extended";
-import { HttpGetClient } from "@/infra/http";
-import { FacebookApi } from "@/infra/apis";
+import { mock, MockProxy } from 'jest-mock-extended';
+import { HttpGetClient } from '@/infra/http';
+import { FacebookApi } from '@/infra/apis';
 
 describe('FacebookApi', () => {
   let clientId: string;
@@ -18,7 +18,11 @@ describe('FacebookApi', () => {
     httpClient.get
       .mockResolvedValueOnce({ access_token: 'any_app_token' })
       .mockResolvedValueOnce({ data: { user_id: 'any_user_id' } })
-      .mockResolvedValueOnce({ id: 'any_fb_id', name: 'any_fb_name', email: 'any_fb_email' });
+      .mockResolvedValueOnce({
+        id: 'any_fb_id',
+        name: 'any_fb_name',
+        email: 'any_fb_email'
+      });
     sut = new FacebookApi(httpClient, clientId, clientSecret);
   });
 
@@ -62,6 +66,6 @@ describe('FacebookApi', () => {
       facebookId: 'any_fb_id',
       name: 'any_fb_name',
       email: 'any_fb_email'
-    })
+    });
   });
 });
