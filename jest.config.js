@@ -2,7 +2,7 @@ module.exports = {
   collectCoverageFrom: ['<rootDir>/src/**/*.ts'],
   coverageDirectory: 'coverage',
   coverageProvider: 'babel',
-
+  clearMocks: true,
   // A list of reporter names that Jest uses when writing coverage reports
   // coverageReporters: [
   //   "json",

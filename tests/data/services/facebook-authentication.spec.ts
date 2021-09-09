@@ -41,7 +41,6 @@ describe("Facebook AuthenticationService", () => {
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
     sut = new FacebookAuthenticationService(
       facebookApi,
       userAccountRepository,
