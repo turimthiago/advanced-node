@@ -12,7 +12,8 @@
     "test:staged": "npm run test -- --findRelatedTests",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
   "keywords": [],
   "author": "",

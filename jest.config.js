@@ -11,12 +11,9 @@ module.exports = {
     '@/(.+)': '<rootDir>/src/$1'
   },
   testMatch: ['**/*.spec.ts'],
-  roots: [
-    '<rootDir>/src',
-    '<rootDir>/tests'
-  ],
+  roots: ['<rootDir>/tests'],
   transform: {
     '\\.ts$': 'ts-jest'
   },
-  clearMocks: true,
-}
+  clearMocks: true
+};

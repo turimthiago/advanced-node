@@ -1,15 +1,25 @@
 {
-  "extends": [
-    "standard-with-typescript",
+  "root": true,
+  "env": {"node": true},
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "@typescript-eslint",
     "prettier"
   ],
-  "parserOptions": {
-    "project": "./tsconfig.json"
-  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
   "rules": {
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/no-namespace": "off",
     "@typescript-eslint/return-await": "off",
-    "@typescript-eslint/no-non-null-assertion": "off"
+    "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/ban-types" :"off",
+    "@typescript-eslint/no-explicit-any":"off",
+    "no-console": 1,       // Means warning
+    "prettier/prettier": 2 // Means error
   }
 }
