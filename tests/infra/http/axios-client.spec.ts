@@ -1,14 +1,7 @@
-import { HttpGetClient } from '@/infra/http';
 import axios from 'axios';
+import { AxiosHttClient } from '@/infra/http';
 
 jest.mock('axios');
-
-class AxiosHttClient {
-  async get(params: HttpGetClient.Params): Promise<any> {
-    const result = await axios.get(params.url, { params: params.params });
-    return result.data;
-  }
-}
 
 describe('AxiosHttClient', () => {
   let sut: AxiosHttClient;
