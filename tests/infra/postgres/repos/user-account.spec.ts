@@ -1,6 +1,14 @@
 import { LoadUserAccountRepository } from '@/data/repos';
-import { newDb } from 'pg-mem';
-import { Entity, PrimaryGeneratedColumn, Column, getRepository } from 'typeorm';
+import { IBackup, newDb } from 'pg-mem';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  getRepository,
+  Repository,
+  Connection,
+  getConnection
+} from 'typeorm';
 
 @Entity({ name: 'usuarios' })
 export class PgUser {
@@ -33,33 +41,41 @@ class PgUserAccountRepository implements LoadUserAccountRepository {
 }
 
 describe('PgUserAccountRepository', () => {
+  let sut: PgUserAccountRepository;
+  let pgUserRepository: Repository<PgUser>;
+  let backup: IBackup;
+
+  beforeAll(async () => {
+    const db = newDb();
+    const connection = await db.adapters.createTypeormConnection({
+      type: 'postgres',
+      entities: [PgUser]
+    });
+    await connection.synchronize();
+    backup = db.backup();
+    pgUserRepository = getRepository(PgUser);
+  });
+
+  afterAll(async () => {
+    await getConnection().close();
+  });
+
+  beforeEach(() => {
+    backup.restore();
+    sut = new PgUserAccountRepository();
+  });
+
   describe('load', () => {
     it('should return an account if email exists', async () => {
-      const db = newDb();
-      const connection = await db.adapters.createTypeormConnection({
-        type: 'postgres',
-        entities: [PgUser]
-      });
-      await connection.synchronize();
-      const pgUserRepository = getRepository(PgUser);
-      await pgUserRepository.save({ email: 'existing_email' });
+      await pgUserRepository.save({ email: 'exists@mail.com' });
       const sut = new PgUserAccountRepository();
-      const account = await sut.load({ email: 'existing_email' });
+      const account = await sut.load({ email: 'exists@mail.com' });
       expect(account).toEqual({ id: '1' });
-      await connection.close();
     });
 
     it('should return undefined if does not exists', async () => {
-      const db = newDb();
-      const connection = await db.adapters.createTypeormConnection({
-        type: 'postgres',
-        entities: [PgUser]
-      });
-      await connection.synchronize();
-      const sut = new PgUserAccountRepository();
-      const account = await sut.load({ email: 'new_email' });
+      const account = await sut.load({ email: 'notexists@mail.com' });
       expect(account).toBeUndefined();
-      await connection.close();
     });
   });
 });
