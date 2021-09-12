@@ -1,4 +1,4 @@
-import { IBackup, IMemoryDb, newDb } from 'pg-mem';
+import { IBackup } from 'pg-mem';
 import { getConnection, getRepository, Repository } from 'typeorm';
 import { PgUser } from '@/infra/postgres/entities';
 import { PgUserAccountRepository } from '@/infra/postgres/repos';
