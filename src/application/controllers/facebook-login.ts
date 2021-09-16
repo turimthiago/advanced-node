@@ -1,12 +1,13 @@
 import {
   badRequest,
   HttpResponse,
+  ok,
   serverError,
   unauthorized
 } from '@/application/helpers';
 import { FacebookAuthentication } from '@/domain/features';
 import { AccessToken } from '@/domain/models';
-import { RequiredFieldError } from '@/application/errors';
+import { RequiredFieldError, UnknownError } from '@/application/errors';
 
 export class FacebookLoginController {
   constructor(
@@ -26,16 +27,12 @@ export class FacebookLoginController {
         token: httpRequest.token
       });
       if (accessToken instanceof AccessToken) {
-        return {
-          statusCode: 200,
-          data: {
-            accessToken: accessToken.value
-          }
-        };
+        return ok({ accessToken: accessToken.value });
       }
       return unauthorized();
     } catch (error) {
-      return serverError(error);
+      if (error instanceof Error) return serverError(error);
+      return serverError(new UnknownError());
     }
   }
 }

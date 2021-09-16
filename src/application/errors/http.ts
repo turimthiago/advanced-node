@@ -19,3 +19,10 @@ export class UnauthorizedError extends Error {
     this.name = 'UnauthorizedError';
   }
 }
+
+export class UnknownError extends Error {
+  constructor() {
+    super('Unknown error');
+    this.name = 'UnknownError';
+  }
+}
