@@ -12,6 +12,7 @@
     "test:staged": "npm run test -- --findRelatedTests",
     "test:watch": "npm test -- --watch",
     "test:coverage": "npm test -- --coverage",
+    "test:fb-api": "npm test -- -c ./jest.integration.config.js ./tests/external/facebook-api.test.ts",
     "prepare": "husky install",
     "prettier-format": "prettier --config .prettierrc 'src/**/*.ts' --write"
   },
