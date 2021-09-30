@@ -31,10 +31,6 @@ describe('FacebookApi Integration Tests', () => {
     const facebookUser = await sut.loadUser({
       token: 'infalid'
     });
-    expect(facebookUser).toEqual({
-      facebookId: '282347256907122',
-      email: '	turim_bmulwui_teste@tfbnw.net',
-      name: '	Turim Teste'
-    });
+    expect(facebookUser).toBeUndefined();
   });
 });
