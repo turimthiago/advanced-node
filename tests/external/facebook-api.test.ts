@@ -3,13 +3,19 @@ import { AxiosHttClient } from '@/infra/http';
 import { env } from '@/main/config/env';
 
 describe('FacebookApi Integration Tests', () => {
-  it('should return a Facebook User if token is valid', async () => {
-    const axiosClient = new AxiosHttClient();
-    const sut = new FacebookApi(
+  let axiosClient: AxiosHttClient;
+  let sut: FacebookApi;
+
+  beforeEach(() => {
+    axiosClient = new AxiosHttClient();
+    sut = new FacebookApi(
       axiosClient,
       env.facebookApi.clientId,
       env.facebookApi.clientSecret
     );
+  });
+
+  it('should return a Facebook User if token is valid', async () => {
     const facebookUser = await sut.loadUser({
       token:
         'EAAIlI9Vl2qIBANakwcdG1MmannL3AvHkZBAbVCH72s0H38mmlkNUhBS53yvkkc4YZAfuvhxm2lZCVCqHENH1SvLcXHCmvXgJqXZCok53zGDUB4f0PjwxMIE6sZAE291Of3YoLmdGUW44bqcBg4EB9VQHBOUeKaHZAL1r6qUJlTbZCTsCrnXhHwbmFUYRiU12tLjY8X3oGymHKsVR0q5IKvi'
