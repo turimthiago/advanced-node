@@ -1,4 +1,4 @@
-import { TockenGenerator } from '@/data/contracts/crypto';
+import { TockenGenerator } from '@/domain/contracts/crypto';
 import jwt from 'jsonwebtoken';
 
 type Params = TockenGenerator.Params;

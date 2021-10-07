@@ -1,10 +1,10 @@
 import { FacebookAuthentication } from '@/domain/features';
-import { LoadFacebookUserApi } from '@/data/contracts/apis/facebook';
+import { LoadFacebookUserApi } from '@/domain/contracts/apis/facebook';
 import { AuthenticationError } from '@/domain/errors';
 import {
   SaveFacebookAccountRepository,
   LoadUserAccountRepository
-} from '@/data/repos';
+} from '@/domain/contracts/repos';
 import { FacebookAccount } from '@/domain/models/facebook-account';
 import { TockenGenerator } from '../contracts/crypto';
 import { AccessToken } from '@/domain/models';

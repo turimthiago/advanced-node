@@ -1,10 +1,10 @@
-import { IBackup } from 'pg-mem';
-import request from 'supertest';
-import { getConnection } from 'typeorm';
-import { makeFakedb } from '@/tests/infra/postgres/mocks';
 import { PgUser } from '@/infra/postgres/entities';
 import { app } from '@/main/config/app';
 import { UnauthorizedError } from '@/application/errors';
+import { makeFakedb } from '@/tests/infra/postgres/mocks';
+import { IBackup } from 'pg-mem';
+import { getConnection } from 'typeorm';
+import request from 'supertest';
 
 describe('Login Routes', () => {
   describe('POST /login/facebook', () => {
