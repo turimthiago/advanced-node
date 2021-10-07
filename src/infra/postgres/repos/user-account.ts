@@ -15,8 +15,8 @@ export class PgUserAccountRepository
 {
   private readonly pgUserRepository = getRepository(PgUser);
 
-  async load(params: LoadParams): Promise<LoadResult> {
-    const pgUser = await this.pgUserRepository.findOne({ email: params.email });
+  async load({ email }: LoadParams): Promise<LoadResult> {
+    const pgUser = await this.pgUserRepository.findOne({ email });
     if (pgUser !== undefined) {
       return {
         id: pgUser.id.toString(),
@@ -25,22 +25,27 @@ export class PgUserAccountRepository
     }
   }
 
-  async saveWithFacebook(params: SaveParams): Promise<SaveResult> {
-    let id: string;
-    if (params.id === undefined) {
+  async saveWithFacebook({
+    id,
+    name,
+    email,
+    facebookId
+  }: SaveParams): Promise<SaveResult> {
+    let resultId: string;
+    if (id === undefined) {
       const pgUser = await this.pgUserRepository.save({
-        email: params.email,
-        name: params.name,
-        facebookId: params.facebookId
+        email,
+        name,
+        facebookId
       });
-      id = pgUser.id.toString();
+      resultId = pgUser.id.toString();
     } else {
-      id = params.id;
+      resultId = id;
       await this.pgUserRepository.update(
-        { id: parseInt(params.id) },
-        { name: params.name, facebookId: params.facebookId }
+        { id: parseInt(id) },
+        { name, facebookId }
       );
     }
-    return { id };
+    return { id: resultId };
   }
 }
