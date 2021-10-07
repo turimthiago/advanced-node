@@ -18,6 +18,7 @@ type UserInfo = {
 };
 
 export class FacebookApi implements LoadFacebookUserApi {
+  //https://graph.facebook.com/oauth/access_token
   private readonly baseUrl = 'https://graph.facebook.com';
 
   constructor(
@@ -41,17 +42,6 @@ export class FacebookApi implements LoadFacebookUserApi {
     }
   }
 
-  private async getAppToken(): Promise<AppToken> {
-    return this.httpGetClient.get({
-      url: `${this.baseUrl}/oath/access_token`,
-      params: {
-        client_id: this.clientId,
-        client_secret: this.clientSecret,
-        grant_type: 'client_credentials'
-      }
-    });
-  }
-
   private async getDebugToken(clientToken: string): Promise<DebugToken> {
     const appToken = await this.getAppToken();
     return this.httpGetClient.get({
@@ -59,6 +49,17 @@ export class FacebookApi implements LoadFacebookUserApi {
       params: {
         access_token: appToken.access_token,
         input_token: clientToken
+      }
+    });
+  }
+
+  private async getAppToken(): Promise<AppToken> {
+    return this.httpGetClient.get({
+      url: `${this.baseUrl}/oauth/access_token`,
+      params: {
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+        grant_type: 'client_credentials'
       }
     });
   }

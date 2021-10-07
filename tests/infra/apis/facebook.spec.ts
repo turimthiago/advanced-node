@@ -29,7 +29,7 @@ describe('FacebookApi', () => {
   it('should get app token', async () => {
     await sut.loadUser({ token: 'any_client_token' });
     expect(httpClient.get).toHaveBeenCalledWith({
-      url: 'https://graph.facebook.com/oath/access_token',
+      url: 'https://graph.facebook.com/oauth/access_token',
       params: {
         client_id: clientId,
         client_secret: clientSecret,
