@@ -10,7 +10,7 @@ import { AccessToken } from '@/domain/entities';
 
 export type FacebookAuthentication = (params: {
   token: string;
-}) => Promise<AccessToken | AuthenticationError>;
+}) => Promise<{ accessToken: string }>;
 type Setup = (
   facebookApi: LoadFacebookUserApi,
   userAccountRepository: LoadUserAccountRepository &
@@ -29,11 +29,11 @@ export const setupFacebookAuthentication: Setup =
       const { id } = await userAccountRepository.saveWithFacebook(
         facebookAccount
       );
-      const token = await crypto.generateToken({
+      const accessToken = await crypto.generateToken({
         key: id,
         expirationInMs: AccessToken.expirationInMs
       });
-      return new AccessToken(token);
+      return { accessToken };
     }
-    return new AuthenticationError();
+    throw new AuthenticationError();
   };
