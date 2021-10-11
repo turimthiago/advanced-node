@@ -1,4 +1,3 @@
-import { FacebookAuthentication } from '@/domain/features';
 import { LoadFacebookUserApi } from '@/domain/contracts/apis/facebook';
 import { AuthenticationError } from '@/domain/entities/errors';
 import {
@@ -9,32 +8,32 @@ import { FacebookAccount } from '@/domain/entities/facebook-account';
 import { TockenGenerator } from '../contracts/crypto';
 import { AccessToken } from '@/domain/entities';
 
-export class FacebookAuthenticationUsecase implements FacebookAuthentication {
-  constructor(
-    private readonly facebookApi: LoadFacebookUserApi,
-    private readonly userAccountRepository: LoadUserAccountRepository &
-      SaveFacebookAccountRepository,
-    private readonly crypto: TockenGenerator
-  ) {}
+export type FacebookAuthentication = (params: {
+  token: string;
+}) => Promise<AccessToken | AuthenticationError>;
+type Setup = (
+  facebookApi: LoadFacebookUserApi,
+  userAccountRepository: LoadUserAccountRepository &
+    SaveFacebookAccountRepository,
+  crypto: TockenGenerator
+) => FacebookAuthentication;
 
-  async perform(
-    params: FacebookAuthentication.Params
-  ): Promise<FacebookAuthentication.Result> {
-    const fbData = await this.facebookApi.loadUser(params);
+export const setupFacebookAuthentication: Setup =
+  (facebookApi, userAccountRepository, crypto) => async (params) => {
+    const fbData = await facebookApi.loadUser(params);
     if (fbData !== undefined) {
-      const accountData = await this.userAccountRepository.load({
+      const accountData = await userAccountRepository.load({
         email: fbData.email
       });
       const facebookAccount = new FacebookAccount(fbData, accountData);
-      const { id } = await this.userAccountRepository.saveWithFacebook(
+      const { id } = await userAccountRepository.saveWithFacebook(
         facebookAccount
       );
-      const token = await this.crypto.generateToken({
+      const token = await crypto.generateToken({
         key: id,
         expirationInMs: AccessToken.expirationInMs
       });
       return new AccessToken(token);
     }
     return new AuthenticationError();
-  }
-}
+  };
