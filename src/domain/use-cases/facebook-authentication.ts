@@ -8,9 +8,10 @@ import { FacebookAccount } from '@/domain/entities/facebook-account';
 import { TockenGenerator } from '../contracts/crypto';
 import { AccessToken } from '@/domain/entities';
 
-export type FacebookAuthentication = (params: {
-  token: string;
-}) => Promise<{ accessToken: string }>;
+type Output = { accessToken: string };
+type Input = { token: string };
+
+export type FacebookAuthentication = (params: Input) => Promise<Output>;
 type Setup = (
   facebookApi: LoadFacebookUserApi,
   userAccountRepository: LoadUserAccountRepository &
