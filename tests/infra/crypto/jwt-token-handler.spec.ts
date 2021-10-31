@@ -1,18 +1,18 @@
 import jwt from 'jsonwebtoken';
-import { JwtTokenGenerator } from '@/infra/crypto';
+import { JwtTokenHandler } from '@/infra/crypto';
 
 jest.mock('jsonwebtoken');
 
 describe('JwtTokenGenerator', () => {
   let fakeJwt: jest.Mocked<typeof jwt>;
-  let sut: JwtTokenGenerator;
+  let sut: JwtTokenHandler;
   let secret: string;
 
   beforeEach(() => {
     secret = 'any_secret';
     fakeJwt = jwt as jest.Mocked<typeof jwt>;
     fakeJwt.sign.mockImplementation(() => 'any_token');
-    sut = new JwtTokenGenerator(secret);
+    sut = new JwtTokenHandler(secret);
   });
 
   it('should call sign with correct params', async () => {

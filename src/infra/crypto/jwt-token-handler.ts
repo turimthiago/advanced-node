@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 type Params = TockenGenerator.Params;
 type Result = TockenGenerator.Result;
-export class JwtTokenGenerator implements TockenGenerator {
+export class JwtTokenHandler implements TockenGenerator {
   constructor(private readonly secret: string) {}
 
   async generateToken({ expirationInMs, key }: Params): Promise<Result> {
