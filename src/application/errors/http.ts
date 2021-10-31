@@ -26,3 +26,10 @@ export class UnknownError extends Error {
     this.name = 'UnknownError';
   }
 }
+
+export class ForbiddenError extends Error {
+  constructor() {
+    super('Forbidden error');
+    this.name = 'ForbiddenError';
+  }
+}
