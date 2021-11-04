@@ -15,7 +15,11 @@ class AuthenticationMiddleware {
       'authorization'
     ).validate();
     if (error !== undefined) return forbidden();
-    await this.authorize({ token: authorization });
+    try {
+      await this.authorize({ token: authorization });
+    } catch (error) {
+      return forbidden();
+    }
   }
 }
 
@@ -54,5 +58,11 @@ describe('AuthenticationMiddleware', () => {
       token: authorization
     });
     expect(authorize).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return 403 if authorize throws', async () => {
+    authorize.mockRejectedValueOnce(new Error('any_error'));
+    const response = await sut.handle({ authorization });
+    expect(response).toEqual(forbidden());
   });
 });
