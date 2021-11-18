@@ -30,7 +30,7 @@ describe('JwtTokenHendler', () => {
     });
 
     it('should call sign with correct params', async () => {
-      await sut.generateToken({ key, expirationInMs });
+      await sut.generate({ key, expirationInMs });
       expect(fakeJwt.sign).toHaveBeenCalledWith({ key }, secret, {
         expiresIn: 1
       });
@@ -38,7 +38,7 @@ describe('JwtTokenHendler', () => {
     });
 
     it('should return a token', async () => {
-      const generatedToken = await sut.generateToken({
+      const generatedToken = await sut.generate({
         key,
         expirationInMs: 1000
       });
@@ -49,7 +49,7 @@ describe('JwtTokenHendler', () => {
       fakeJwt.sign.mockImplementationOnce(() => {
         throw new Error('token_error');
       });
-      const promise = sut.generateToken({
+      const promise = sut.generate({
         key,
         expirationInMs
       });
@@ -68,13 +68,13 @@ describe('JwtTokenHendler', () => {
     });
 
     it('should call sign with correct params', async () => {
-      await sut.validateToken({ token });
+      await sut.validate({ token });
       expect(fakeJwt.verify).toHaveBeenCalledWith(token, secret);
       expect(fakeJwt.verify).toHaveBeenCalledTimes(1);
     });
 
     it('should return key used to sign', async () => {
-      const generatedKey = await sut.validateToken({ token });
+      const generatedKey = await sut.validate({ token });
       expect(generatedKey).toBe(key);
     });
 
@@ -82,7 +82,7 @@ describe('JwtTokenHendler', () => {
       fakeJwt.verify.mockImplementationOnce(() => {
         throw new Error('key_error');
       });
-      const promise = sut.validateToken({
+      const promise = sut.validate({
         token
       });
       await expect(promise).rejects.toThrow(new Error('key_error'));
@@ -90,7 +90,7 @@ describe('JwtTokenHendler', () => {
 
     it('should throw if verify retuns undefined', async () => {
       fakeJwt.verify.mockImplementationOnce(() => undefined);
-      const promise = sut.validateToken({
+      const promise = sut.validate({
         token
       });
       await expect(promise).rejects.toThrow();
