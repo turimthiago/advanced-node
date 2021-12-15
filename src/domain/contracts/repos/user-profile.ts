@@ -4,6 +4,7 @@ export interface SaveUserPicture {
 
 export namespace SaveUserPicture {
   export interface Input {
+    id: string;
     pictureUrl?: string;
     initials?: string;
   }
