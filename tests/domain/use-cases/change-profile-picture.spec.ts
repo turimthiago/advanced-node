@@ -12,6 +12,7 @@ import { UserProfile } from '@/domain/entities';
 
 import { mock, MockProxy } from 'jest-mock-extended';
 import { mocked } from 'ts-jest/utils';
+import { assert } from 'console';
 
 jest.mock('@/domain/entities/user-profile');
 
@@ -87,11 +88,21 @@ describe('ChangeProfilePicture', () => {
   });
 
   it('should call DeleteFile when file exists and SaveUserPicture throws', async () => {
+    expect.assertions(2);
     userProfileRepository.savePicture.mockRejectedValueOnce(new Error());
     const promise = sut({ id: 'any_id', file });
     promise.catch(() => {
       expect(fileStorage.delete).toHaveBeenLastCalledWith({ key: uuid });
       expect(fileStorage.delete).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('should not call DeleteFile when file does exists and SaveUserPicture throws', async () => {
+    expect.assertions(1);
+    userProfileRepository.savePicture.mockRejectedValueOnce(new Error());
+    const promise = sut({ id: 'any_id', file: undefined });
+    promise.catch(() => {
+      expect(fileStorage.delete).not.toHaveBeenCalled();
     });
   });
 });

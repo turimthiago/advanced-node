@@ -33,7 +33,8 @@ export const setupChangeProfilePicture: Setup =
     try {
       await userProfileRepository.savePicture(userProfile);
     } catch (error) {
-      await fileStorage.delete({ key });
+      if (file) await fileStorage.delete({ key });
+      throw new Error();
     }
     return userProfile;
   };
