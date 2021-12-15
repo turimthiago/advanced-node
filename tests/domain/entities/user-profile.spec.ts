@@ -60,10 +60,19 @@ describe('UserProfile', () => {
     });
   });
 
-  it('should create with empty initials when name and pictureUrl ate not provider', () => {
+  it('should create with empty initials when name and pictureUrl are not provider', () => {
     sut.setPicture({});
     expect(sut).toEqual({
       id: 'any_id'
+    });
+  });
+
+  it('should create with empty initials when name is empty', () => {
+    sut.setPicture({ name: '' });
+    expect(sut).toEqual({
+      id: 'any_id',
+      pictureUrl: undefined,
+      inititals: undefined
     });
   });
 });
