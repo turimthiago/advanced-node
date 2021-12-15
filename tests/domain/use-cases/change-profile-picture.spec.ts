@@ -2,7 +2,11 @@ import {
   ChangeProfilePicture,
   setupChangeProfilePicture
 } from '@/domain/use-cases/change-profile-picture';
-import { UUIDGenerator, UploadFile } from '@/domain/contracts/gateways';
+import {
+  UUIDGenerator,
+  UploadFile,
+  DeleteFile
+} from '@/domain/contracts/gateways';
 import { LoadUserProfile, SaveUserPicture } from '@/domain/contracts/repos';
 import { UserProfile } from '@/domain/entities';
 
@@ -16,7 +20,7 @@ describe('ChangeProfilePicture', () => {
   let crypto: MockProxy<UUIDGenerator>;
   let userProfileRepository: MockProxy<SaveUserPicture & LoadUserProfile>;
   let file: Buffer;
-  let fileStorage: MockProxy<UploadFile>;
+  let fileStorage: MockProxy<UploadFile & DeleteFile>;
   let sut: ChangeProfilePicture;
 
   beforeAll(() => {
@@ -79,6 +83,15 @@ describe('ChangeProfilePicture', () => {
     expect(result).toMatchObject({
       pictureUrl: 'any_url',
       initials: 'any_initials'
+    });
+  });
+
+  it('should call DeleteFile when file exists and SaveUserPicture throws', async () => {
+    userProfileRepository.savePicture.mockRejectedValueOnce(new Error());
+    const promise = sut({ id: 'any_id', file });
+    promise.catch(() => {
+      expect(fileStorage.delete).toHaveBeenLastCalledWith({ key: uuid });
+      expect(fileStorage.delete).toHaveBeenCalledTimes(1);
     });
   });
 });
