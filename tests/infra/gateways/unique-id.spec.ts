@@ -1,6 +1,4 @@
-import { UUIDGenerator } from '@/domain/contracts/gateways';
-
-import { UniqueId } from '@/infra/crypto';
+import { UniqueId } from '@/infra/gateways';
 
 describe('UniqueId', () => {
   let key: string;

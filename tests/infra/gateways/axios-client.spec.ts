@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { AxiosHttClient } from '@/infra/http';
+import { AxiosHttClient } from '@/infra/gateways';
 
 jest.mock('axios');
 

@@ -1,7 +1,7 @@
-import { PgUser } from '@/infra/postgres/entities';
+import { PgUser } from '@/infra/repos/postgres/entities';
 import { app } from '@/main/config/app';
 import { UnauthorizedError } from '@/application/errors';
-import { makeFakedb } from '@/tests/infra/postgres/mocks';
+import { makeFakedb } from '@/tests/infra/repos/postgres/mocks';
 import { IBackup } from 'pg-mem';
 import { getConnection } from 'typeorm';
 import request from 'supertest';
@@ -10,7 +10,7 @@ describe('Login Routes', () => {
   describe('POST /login/facebook', () => {
     let backup: IBackup;
     const loadUserSpy = jest.fn();
-    jest.mock('@/infra/apis/facebook', () => ({
+    jest.mock('@/infra/gateways/facebook-api', () => ({
       FacebookApi: jest.fn().mockReturnValue({ loadUser: loadUserSpy })
     }));
 
