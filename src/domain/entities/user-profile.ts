@@ -13,11 +13,11 @@ export class UserProfile {
   }): void {
     this.pictureUrl = pictureUrl;
     if (!pictureUrl && name) {
-      const firstLetters = name.match(/\b(.)/g) ?? [];
+      const firstLetters = name.match(/\b(.)/g)!;
       if (firstLetters.length > 1) {
-        this.initials = `${firstLetters.shift()?.toUpperCase() ?? ''}${
-          firstLetters.pop()?.toUpperCase() ?? ''
-        }`;
+        this.initials = `${firstLetters.shift()!.toUpperCase()}${firstLetters
+          .pop()!
+          .toUpperCase()}`;
       } else {
         this.initials = name.substring(0, 2).toUpperCase();
       }

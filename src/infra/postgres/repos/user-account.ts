@@ -16,7 +16,7 @@ export class PgUserAccountRepository
     if (pgUser !== undefined) {
       return {
         id: pgUser.id.toString(),
-        name: pgUser.name ?? undefined
+        name: pgUser.name
       };
     }
   }
