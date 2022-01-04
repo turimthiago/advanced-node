@@ -107,5 +107,12 @@ describe('AwsS3FileStorage', () => {
       expect(deleteObjectSpy).toHaveBeenCalledTimes(1);
       expect(deleteObjectPromiseSpy).toHaveBeenCalledTimes(1);
     });
+
+    it('should rethow if deleteObject throws', async () => {
+      const deleteError = new Error();
+      deleteObjectPromiseSpy.mockRejectedValueOnce(deleteError);
+      const promise = sut.delete({ key: 'any key' });
+      await expect(promise).rejects.toThrow(deleteError);
+    });
   });
 });
