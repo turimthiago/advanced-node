@@ -42,4 +42,17 @@ describe('PgUserProfileRepository', () => {
       });
     });
   });
+
+  describe('loadPicture', () => {
+    it('should load User profile', async () => {
+      const { id } = await pgUserRepository.save({
+        email: 'any_email',
+        name: 'any_name'
+      });
+      const userProfile = await sut.load({
+        id: id.toString()
+      });
+      expect(userProfile?.name).toBe('any_name');
+    });
+  });
 });

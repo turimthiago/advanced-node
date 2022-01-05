@@ -1,4 +1,4 @@
-import { SaveUserPicture } from '@/domain/contracts/repos';
+import { LoadUserProfile, SaveUserPicture } from '@/domain/contracts/repos';
 import { getRepository } from 'typeorm';
 import { PgUser } from '@/infra/repos/postgres/entities';
 
@@ -13,5 +13,11 @@ export class PgUserProfileRepository implements SaveUserPicture {
       { id: parseInt(id) },
       { pictureUrl, initials }
     );
+  }
+
+  async load({ id }: LoadUserProfile.Input): Promise<LoadUserProfile.Output> {
+    const pgUserRepository = getRepository(PgUser);
+    const pgUser = await pgUserRepository.findOne({ id: parseInt(id) });
+    if (pgUser) return { name: pgUser.name };
   }
 }
