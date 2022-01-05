@@ -54,5 +54,13 @@ describe('PgUserProfileRepository', () => {
       });
       expect(userProfile?.name).toBe('any_name');
     });
+
+    it('should return undefined', async () => {
+      const invliadId = '1';
+      const userProfile = await sut.load({
+        id: invliadId
+      });
+      expect(userProfile?.name).toBeUndefined();
+    });
   });
 });
