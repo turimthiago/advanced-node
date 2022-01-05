@@ -12,7 +12,6 @@ import { UserProfile } from '@/domain/entities';
 
 import { mock, MockProxy } from 'jest-mock-extended';
 import { mocked } from 'ts-jest/utils';
-import { assert } from 'console';
 
 jest.mock('@/domain/entities/user-profile');
 
@@ -73,8 +72,17 @@ describe('ChangeProfilePicture', () => {
     expect(userProfileRepository.savePicture).toHaveBeenCalledTimes(1);
   });
 
+  it('should call SaveUserPicture with correct input', async () => {
+    userProfileRepository.load.mockResolvedValueOnce(undefined);
+    await sut({ id: 'any_id', file });
+    expect(userProfileRepository.savePicture).toHaveBeenCalledWith(
+      mocked(UserProfile).mock.instances[0]
+    );
+    expect(userProfileRepository.savePicture).toHaveBeenCalledTimes(1);
+  });
+
   it('should return correct data on sucess', async () => {
-    mocked(UserProfile).mockImplementationOnce((id) => ({
+    mocked(UserProfile).mockImplementationOnce((_) => ({
       setPicture: jest.fn(),
       id: 'any_id',
       pictureUrl: 'any_url',

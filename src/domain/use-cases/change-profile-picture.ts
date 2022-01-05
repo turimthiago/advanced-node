@@ -26,7 +26,7 @@ export const setupChangeProfilePicture: Setup =
         key
       });
     } else {
-      data.name = (await userProfileRepository.load({ id })).name;
+      data.name = (await userProfileRepository.load({ id }))?.name;
     }
     const userProfile = new UserProfile(id);
     userProfile.setPicture(data);
