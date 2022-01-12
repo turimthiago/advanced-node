@@ -4,7 +4,7 @@ import {
   RequiredFieldError
 } from '@/application/errors';
 import { ChangeProfilePicture } from '@/domain/use-cases';
-import { SavePictureController } from '@/application/controllers';
+import { Controller, SavePictureController } from '@/application/controllers';
 
 describe('SavePictureController', () => {
   let userId: string;
@@ -27,6 +27,10 @@ describe('SavePictureController', () => {
 
   beforeEach(() => {
     sut = new SavePictureController(changeProfilePicture);
+  });
+
+  it('should extends Controller', async () => {
+    expect(sut).toBeInstanceOf(Controller);
   });
 
   it('should return 400 if file is not provided', async () => {
