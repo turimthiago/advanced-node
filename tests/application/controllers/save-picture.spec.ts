@@ -1,20 +1,17 @@
 import { RequiredFieldError } from '@/application/errors';
-import { badRequest, HttpResponse } from '@/application/helpers';
+import { badRequest, HttpResponse, ok } from '@/application/helpers';
 import { ChangeProfilePicture } from '@/domain/use-cases';
 
 type HttpRequest = {
   file: { buffer: Buffer; mimeType: string };
   userId: string;
 };
-type Model = Error;
+type Model = Error | { initials?: string; pictureUrl?: string };
 
 export class SavePictureController {
   constructor(private readonly changeProfilePicture: ChangeProfilePicture) {}
 
-  async handle({
-    file,
-    userId
-  }: HttpRequest): Promise<HttpResponse<Model> | undefined> {
+  async handle({ file, userId }: HttpRequest): Promise<HttpResponse<Model>> {
     if (!file || file === null)
       return badRequest(new RequiredFieldError('file'));
     if (file.buffer.length === 0)
@@ -23,10 +20,11 @@ export class SavePictureController {
       return badRequest(new InvalidMimeTypeError(['png', 'jpeg']));
     if (file.buffer.length > 5 * 1024 * 1024)
       return badRequest(new MaxFileSizeError(5));
-    await this.changeProfilePicture({
+    const data = await this.changeProfilePicture({
       id: userId,
       file: file.buffer
     });
+    return ok(data);
   }
 }
 
@@ -55,7 +53,10 @@ describe('SavePictureController', () => {
     mimeType = 'image/png';
     buffer = Buffer.from('any_buffer');
     file = { buffer, mimeType };
-    changeProfilePicture = jest.fn();
+    changeProfilePicture = jest.fn().mockResolvedValue({
+      statusCode: 200,
+      data: { initials: 'any_initials', pictureUrl: 'any_url' }
+    });
   });
 
   beforeEach(() => {
@@ -155,5 +156,19 @@ describe('SavePictureController', () => {
       file: buffer
     });
     expect(changeProfilePicture).toHaveBeenCalledTimes(1);
+  });
+
+  it('should return 200 with valid data', async () => {
+    const httpResponse = await sut.handle({
+      file,
+      userId
+    });
+    expect(httpResponse).toEqual({
+      statusCode: 200,
+      data: {
+        statusCode: 200,
+        data: { initials: 'any_initials', pictureUrl: 'any_url' }
+      }
+    });
   });
 });
