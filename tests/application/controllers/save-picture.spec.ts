@@ -1,8 +1,3 @@
-import {
-  InvalidMimeTypeError,
-  MaxFileSizeError,
-  RequiredFieldError
-} from '@/application/errors';
 import { ChangeProfilePicture } from '@/domain/use-cases';
 import { Controller, SavePictureController } from '@/application/controllers';
 import {
@@ -42,9 +37,9 @@ describe('SavePictureController', () => {
   it('should build validators correctly', async () => {
     const validators = sut.buildersValidators({ file, userId });
     expect(validators).toEqual([
-      new Required(file, 'file'),
+      new Required(file, 'buffer'),
       new RequiredBuffer(buffer, 'buffer'),
-      new AllowedMimeTypes(['png', 'jpg'], mimeType),
+      new AllowedMimeTypes(['jpg', 'png'], mimeType),
       new MaxFileSize(5, buffer)
     ]);
   });
