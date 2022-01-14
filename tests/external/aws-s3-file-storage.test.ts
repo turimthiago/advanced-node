@@ -3,11 +3,11 @@ import { env } from '@/main/config/env';
 import axios from 'axios';
 
 describe('Aws S3 Tests', () => {
-  let key: string;
+  let fileName: string;
   let sut: AwsS3FileStorage;
 
   beforeAll(() => {
-    key = 'any_key.png';
+    fileName = 'any_file_name';
   });
 
   beforeEach(() => {
@@ -19,13 +19,13 @@ describe('Aws S3 Tests', () => {
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+M/A8B8ABQAB/6Zcm10AAAAASUVORK5CYII=';
     const file = Buffer.from(onePixelImage, 'base64');
     const pictureUrl = await sut.upload({
-      key,
+      fileName,
       file
     });
     const response = await axios.get(pictureUrl);
     expect(response.status).toBe(200);
 
-    await sut.delete({ key });
+    await sut.delete({ fileName });
     const promise = axios.get(pictureUrl);
     await expect(promise).rejects.toThrow();
   });

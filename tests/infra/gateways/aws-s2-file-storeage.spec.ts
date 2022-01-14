@@ -9,14 +9,14 @@ describe('AwsS3FileStorage', () => {
   let accessKey: string;
   let secret: string;
   let bucket: string;
-  let key: string;
+  let fileName: string;
   let sut: AwsS3FileStorage;
 
   beforeAll(() => {
     accessKey = 'any_access_key';
     secret = 'any_secret';
     bucket = 'any_bucket';
-    key = 'any_key';
+    fileName = 'any_fileName';
   });
 
   beforeEach(() => {
@@ -53,10 +53,10 @@ describe('AwsS3FileStorage', () => {
     });
 
     it('should call put object with correct input', async () => {
-      await sut.upload({ key, file });
+      await sut.upload({ fileName, file });
       expect(putObjectSpy).toHaveBeenCalledWith({
         Bucket: bucket,
-        Key: key,
+        Key: fileName,
         Body: file,
         ACL: 'public-read'
       });
@@ -65,19 +65,21 @@ describe('AwsS3FileStorage', () => {
     });
 
     it('should return imageUrl', async () => {
-      const imageUrl = await sut.upload({ key, file });
-      expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/${key}`);
+      const imageUrl = await sut.upload({ fileName, file });
+      expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/${fileName}`);
     });
 
     it('should return encoded imageUrl', async () => {
-      const imageUrl = await sut.upload({ key: 'any key', file });
-      expect(imageUrl).toBe(`https://${bucket}.s3.amazonaws.com/any%20key`);
+      const imageUrl = await sut.upload({ fileName: 'any fileName', file });
+      expect(imageUrl).toBe(
+        `https://${bucket}.s3.amazonaws.com/any%20fileName`
+      );
     });
 
     it('should rethow if putObject throws', async () => {
       const uploadError = new Error();
       putObjectPromiseSpy.mockRejectedValueOnce(uploadError);
-      const promise = sut.upload({ key: 'any key', file });
+      const promise = sut.upload({ fileName, file });
       await expect(promise).rejects.toThrow(uploadError);
     });
   });
@@ -99,10 +101,10 @@ describe('AwsS3FileStorage', () => {
     });
 
     it('should call delete object with correct input', async () => {
-      await sut.delete({ key });
+      await sut.delete({ fileName });
       expect(deleteObjectSpy).toHaveBeenCalledWith({
         Bucket: bucket,
-        Key: key
+        Key: fileName
       });
       expect(deleteObjectSpy).toHaveBeenCalledTimes(1);
       expect(deleteObjectPromiseSpy).toHaveBeenCalledTimes(1);
@@ -111,7 +113,7 @@ describe('AwsS3FileStorage', () => {
     it('should rethow if deleteObject throws', async () => {
       const deleteError = new Error();
       deleteObjectPromiseSpy.mockRejectedValueOnce(deleteError);
-      const promise = sut.delete({ key: 'any key' });
+      const promise = sut.delete({ fileName: 'any file_name' });
       await expect(promise).rejects.toThrow(deleteError);
     });
   });

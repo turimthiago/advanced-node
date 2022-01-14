@@ -19,7 +19,9 @@ describe('ChangeProfilePicture', () => {
   let uuid: string;
   let crypto: MockProxy<UUIDGenerator>;
   let userProfileRepository: MockProxy<SaveUserPicture & LoadUserProfile>;
-  let file: Buffer;
+  let file: { buffer: Buffer; mimeType: string };
+  let buffer: Buffer;
+  let mimeType: string;
   let fileStorage: MockProxy<UploadFile & DeleteFile>;
   let sut: ChangeProfilePicture;
 
@@ -27,8 +29,10 @@ describe('ChangeProfilePicture', () => {
     uuid = 'any_unique_id';
     crypto = mock();
     crypto.uuid.mockReturnValue(uuid);
-    file = Buffer.from('any_buffer');
-    fileStorage = mock();
+    buffer = Buffer.from('any_buffer');
+    mimeType = 'image/png';
+    file = { buffer, mimeType };
+    fileStorage = fileStorage = mock();
     fileStorage.upload.mockResolvedValue('any_url');
     userProfileRepository = mock();
     userProfileRepository.load.mockResolvedValue({
@@ -41,8 +45,20 @@ describe('ChangeProfilePicture', () => {
   });
 
   it('should call UploadFile with correct input', async () => {
-    await sut({ id: 'any_id', file });
-    expect(fileStorage.upload).toHaveBeenCalledWith({ file, key: uuid });
+    await sut({ id: 'any_id', file: { buffer, mimeType: 'image/png' } });
+    expect(fileStorage.upload).toHaveBeenCalledWith({
+      file: buffer,
+      fileName: uuid
+    });
+    expect(fileStorage.upload).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call UploadFile with correct input', async () => {
+    await sut({ id: 'any_id', file: { buffer, mimeType: 'image/jpeg' } });
+    expect(fileStorage.upload).toHaveBeenCalledWith({
+      file: buffer,
+      fileName: uuid
+    });
     expect(fileStorage.upload).toHaveBeenCalledTimes(1);
   });
 
@@ -100,7 +116,9 @@ describe('ChangeProfilePicture', () => {
     userProfileRepository.savePicture.mockRejectedValueOnce(new Error());
     const promise = sut({ id: 'any_id', file });
     promise.catch(() => {
-      expect(fileStorage.delete).toHaveBeenLastCalledWith({ key: uuid });
+      expect(fileStorage.delete).toHaveBeenLastCalledWith({
+        fileName: `${uuid}.png`
+      });
       expect(fileStorage.delete).toHaveBeenCalledTimes(1);
     });
   });

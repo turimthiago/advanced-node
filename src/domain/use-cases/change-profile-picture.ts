@@ -11,7 +11,7 @@ type Setup = (
   crypto: UUIDGenerator,
   userProfileRepository: SaveUserPicture & LoadUserProfile
 ) => ChangeProfilePicture;
-type Input = { id: string; file?: Buffer };
+type Input = { id: string; file?: { buffer: Buffer; mimeType: string } };
 type Output = { pictureUrl?: string; initials?: string };
 export type ChangeProfilePicture = (input: Input) => Promise<Output>;
 
@@ -22,8 +22,8 @@ export const setupChangeProfilePicture: Setup =
     const data: { pictureUrl?: string; name?: string } = {};
     if (file) {
       data.pictureUrl = await fileStorage.upload({
-        file,
-        key
+        file: file.buffer,
+        fileName: key
       });
     } else {
       data.name = (await userProfileRepository.load({ id }))?.name;
@@ -33,7 +33,10 @@ export const setupChangeProfilePicture: Setup =
     try {
       await userProfileRepository.savePicture(userProfile);
     } catch (error) {
-      if (file) await fileStorage.delete({ key });
+      if (file)
+        await fileStorage.delete({
+          fileName: `${key}.${file.mimeType.split('/')[1]}`
+        });
       throw error;
     }
     return userProfile;
