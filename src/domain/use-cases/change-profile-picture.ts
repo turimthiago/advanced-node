@@ -4,7 +4,7 @@ import {
   UUIDGenerator
 } from '@/domain/contracts/gateways';
 import { LoadUserProfile, SaveUserPicture } from '@/domain/contracts/repos';
-import { UserProfile } from '../entities';
+import { UserProfile } from '@/domain/entities';
 
 type Setup = (
   fileStorage: UploadFile & DeleteFile,

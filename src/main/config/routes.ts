@@ -5,9 +5,9 @@ import { join } from 'path';
 export const setupRoutes = (app: Express): void => {
   const router = Router();
   readdirSync(join(__dirname, '../routes'))
-    .filter((fileName) => !fileName.endsWith('.map'))
-    .map(async (fileName) => {
-      (await import(`../routes/${fileName}`)).default(router);
+    .filter((file) => !file.endsWith('.map'))
+    .map(async (file) => {
+      (await import(`../routes/${file}`)).default(router);
     });
   app.use('/api', router);
 };

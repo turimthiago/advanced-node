@@ -10,7 +10,7 @@ export class DeletePictureController extends Controller {
   }
 
   async perform({ userId }: HttpRequest): Promise<HttpResponse> {
-    this.changeProfilePicture({ id: userId });
+    await this.changeProfilePicture({ id: userId });
     return noContent();
   }
 }

@@ -55,6 +55,16 @@ describe('PgUserProfileRepository', () => {
       expect(userProfile?.name).toBe('any_name');
     });
 
+    it('should load User profile', async () => {
+      const { id } = await pgUserRepository.save({
+        email: 'any_email'
+      });
+      const userProfile = await sut.load({
+        id: id.toString()
+      });
+      expect(userProfile?.name).toBeUndefined();
+    });
+
     it('should return undefined', async () => {
       const invliadId = '1';
       const userProfile = await sut.load({
