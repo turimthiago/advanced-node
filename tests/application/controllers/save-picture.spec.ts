@@ -20,10 +20,9 @@ describe('SavePictureController', () => {
     mimeType = 'image/png';
     buffer = Buffer.from('any_buffer');
     file = { buffer, mimeType };
-    changeProfilePicture = jest.fn().mockResolvedValue({
-      statusCode: 200,
-      data: { initials: 'any_initials', pictureUrl: 'any_url' }
-    });
+    changeProfilePicture = jest
+      .fn()
+      .mockResolvedValue({ initials: 'any_initials', pictureUrl: 'any_url' });
   });
 
   beforeEach(() => {
@@ -34,7 +33,7 @@ describe('SavePictureController', () => {
     expect(sut).toBeInstanceOf(Controller);
   });
 
-  it('should build validators correctly', async () => {
+  it('should build validators correctly on save', async () => {
     const validators = sut.buildersValidators({ file, userId });
     expect(validators).toEqual([
       new Required(file, 'buffer'),
@@ -42,6 +41,11 @@ describe('SavePictureController', () => {
       new AllowedMimeTypes(['jpg', 'png'], mimeType),
       new MaxFileSize(5, buffer)
     ]);
+  });
+
+  it('should build validators correctly on delete', async () => {
+    const validators = sut.buildersValidators({ file: undefined, userId });
+    expect(validators).toEqual([]);
   });
 
   it('should call ChangeProfilePicture with correct input', async () => {
@@ -63,10 +67,7 @@ describe('SavePictureController', () => {
     });
     expect(httpResponse).toEqual({
       statusCode: 200,
-      data: {
-        statusCode: 200,
-        data: { initials: 'any_initials', pictureUrl: 'any_url' }
-      }
+      data: { initials: 'any_initials', pictureUrl: 'any_url' }
     });
   });
 });
