@@ -6,7 +6,8 @@ module.exports = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   entities: [
-    `${process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'
+    `${
+      process.env.TS_NODE_DEV === undefined ? 'dist' : 'src'
     }/infra/repos/postgres/entities/index.{js,ts}`
   ]
 };
