@@ -8,24 +8,24 @@ import { sign } from 'jsonwebtoken';
 import { env } from '@/main/config/env';
 
 describe('User Routes', () => {
+  let backup: IBackup;
+  let pgUserRepository: Repository<PgUser>;
+
+  beforeAll(async () => {
+    const db = await makeFakedb([PgUser]);
+    pgUserRepository = getRepository(PgUser);
+    backup = db.backup();
+  });
+
+  afterAll(async () => {
+    await getConnection().close();
+  });
+
+  beforeEach(() => {
+    backup.restore();
+  });
+
   describe('DELETE /users/picture', () => {
-    let backup: IBackup;
-    let pgUserRepository: Repository<PgUser>;
-
-    beforeAll(async () => {
-      const db = await makeFakedb([PgUser]);
-      pgUserRepository = getRepository(PgUser);
-      backup = db.backup();
-    });
-
-    afterAll(async () => {
-      await getConnection().close();
-    });
-
-    beforeEach(() => {
-      backup.restore();
-    });
-
     it('should return 403 if not authorization header is present', async () => {
       const { status } = await request(app).delete('/api/users/picture');
       expect(status).toBe(403);
@@ -42,6 +42,13 @@ describe('User Routes', () => {
         .set({ authorization });
       expect(status).toBe(200);
       expect(body).toEqual({ initials: 'TT' });
+    });
+  });
+
+  describe('PUT /users/picture', () => {
+    it('should return 403 if not authorization header is present', async () => {
+      const { status } = await request(app).put('/api/users/picture');
+      expect(status).toBe(403);
     });
   });
 });
