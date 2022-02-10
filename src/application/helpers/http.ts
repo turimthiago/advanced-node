@@ -33,8 +33,3 @@ export const forbidden = (): HttpResponse<Error> => ({
   statusCode: 403,
   data: new ForbiddenError()
 });
-
-export const noContent = (): HttpResponse => ({
-  statusCode: 204,
-  data: null
-});
