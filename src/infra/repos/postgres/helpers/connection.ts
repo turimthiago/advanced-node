@@ -2,9 +2,12 @@ import {
   createConnection,
   getConnection,
   getConnectionManager,
-  QueryRunner
+  QueryRunner,
+  Repository,
+  ObjectType
 } from 'typeorm';
 import { ConnectionNotFoundError } from '@/infra/repos/postgres/helpers';
+import { TransactionNotFoundError } from './errors';
 
 export class PgConnection {
   private static instance?: PgConnection;
@@ -37,17 +40,23 @@ export class PgConnection {
   }
 
   async closeTransaction(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.query) throw new TransactionNotFoundError();
     this.query?.release();
   }
 
   async commit(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.query) throw new TransactionNotFoundError();
     this.query?.commitTransaction();
   }
 
   async rollback(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.query) throw new TransactionNotFoundError();
     this.query?.rollbackTransaction();
+  }
+
+  getRepository<Entity>(entity: ObjectType<Entity>): Repository<Entity> {
+    if (!this.query) throw new ConnectionNotFoundError();
+
+    return this.query?.manager.getRepository(entity);
   }
 }
