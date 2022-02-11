@@ -2,6 +2,7 @@ import {
   ConnectionNotFoundError,
   PgConnection
 } from '@/infra/repos/postgres/helpers';
+import { release } from 'os';
 
 import { mocked } from 'ts-jest/utils';
 import { createConnection, getConnection, getConnectionManager } from 'typeorm';
@@ -19,6 +20,7 @@ describe('PgConnection', () => {
   let getConnectionManagerSpy: jest.Mock;
   let createQueryRunnerSpy: jest.Mock;
   let startTransactionSpy: jest.Mock;
+  let releaseSpy: jest.Mock;
   let createConnectionSpy: jest.Mock;
   let getConnectionSpy: jest.Mock;
   let hasSpy: jest.Mock;
@@ -32,8 +34,10 @@ describe('PgConnection', () => {
     });
     mocked(getConnectionManager).mockImplementation(getConnectionManagerSpy);
     startTransactionSpy = jest.fn();
+    releaseSpy = jest.fn();
     createQueryRunnerSpy = jest.fn().mockReturnValue({
-      startTransaction: startTransactionSpy
+      startTransaction: startTransactionSpy,
+      release: releaseSpy
     });
     createConnectionSpy = jest.fn().mockResolvedValue({
       createQueryRunner: createQueryRunnerSpy
@@ -89,15 +93,29 @@ describe('PgConnection', () => {
 
   it('should open transaction', async () => {
     await sut.connect();
-    await sut.openTransation();
+    await sut.openTransaction();
     expect(startTransactionSpy).toHaveBeenCalledWith();
     expect(startTransactionSpy).toHaveBeenCalledTimes(1);
     await sut.disconnect();
   });
 
   it('should return ConnectionNotFoundError on open transaction if connection is not found', async () => {
-    const promise = sut.openTransation();
+    const promise = sut.openTransaction();
     await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
     expect(startTransactionSpy).not.toHaveBeenCalled();
+  });
+
+  it('should close transaction', async () => {
+    await sut.connect();
+    await sut.closeTransaction();
+    expect(releaseSpy).toHaveBeenCalledWith();
+    expect(releaseSpy).toHaveBeenCalledTimes(1);
+    await sut.disconnect();
+  });
+
+  it('should return ConnectionNotFoundError on close transaction if connection is not found', async () => {
+    const promise = sut.closeTransaction();
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
+    expect(releaseSpy).not.toHaveBeenCalled();
   });
 });
