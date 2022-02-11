@@ -22,6 +22,7 @@ describe('PgConnection', () => {
   let startTransactionSpy: jest.Mock;
   let releaseSpy: jest.Mock;
   let commitTransactionSpy: jest.Mock;
+  let rollbackTransactionSpy: jest.Mock;
   let createConnectionSpy: jest.Mock;
   let getConnectionSpy: jest.Mock;
   let hasSpy: jest.Mock;
@@ -36,11 +37,13 @@ describe('PgConnection', () => {
     mocked(getConnectionManager).mockImplementation(getConnectionManagerSpy);
     startTransactionSpy = jest.fn();
     commitTransactionSpy = jest.fn();
+    rollbackTransactionSpy = jest.fn();
     releaseSpy = jest.fn();
     createQueryRunnerSpy = jest.fn().mockReturnValue({
       startTransaction: startTransactionSpy,
       release: releaseSpy,
-      commitTransaction: commitTransactionSpy
+      commitTransaction: commitTransactionSpy,
+      rollbackTransaction: rollbackTransactionSpy
     });
     createConnectionSpy = jest.fn().mockResolvedValue({
       createQueryRunner: createQueryRunnerSpy
@@ -134,5 +137,19 @@ describe('PgConnection', () => {
     const promise = sut.commit();
     await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
     expect(commitTransactionSpy).not.toHaveBeenCalled();
+  });
+
+  it('should rollback transaction', async () => {
+    await sut.connect();
+    await sut.rollback();
+    expect(rollbackTransactionSpy).toHaveBeenCalledWith();
+    expect(rollbackTransactionSpy).toHaveBeenCalledTimes(1);
+    await sut.disconnect();
+  });
+
+  it('should return ConnectionNotFoundError on roolback transaction if connection is not found', async () => {
+    const promise = sut.commit();
+    await expect(promise).rejects.toThrow(new ConnectionNotFoundError());
+    expect(rollbackTransactionSpy).not.toHaveBeenCalled();
   });
 });
