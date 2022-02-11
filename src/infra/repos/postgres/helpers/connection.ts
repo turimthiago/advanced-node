@@ -33,11 +33,16 @@ export class PgConnection {
 
   async openTransaction(): Promise<void> {
     if (!this.query) throw new ConnectionNotFoundError();
-    await this.query?.startTransaction();
+    this.query?.startTransaction();
   }
 
   async closeTransaction(): Promise<void> {
     if (!this.query) throw new ConnectionNotFoundError();
-    await this.query?.release();
+    this.query?.release();
+  }
+
+  async commit(): Promise<void> {
+    if (!this.query) throw new ConnectionNotFoundError();
+    this.query?.commitTransaction();
   }
 }
