@@ -4,7 +4,9 @@ import {
   getConnectionManager,
   QueryRunner,
   Repository,
-  ObjectType
+  ObjectType,
+  Connection,
+  getRepository
 } from 'typeorm';
 import { ConnectionNotFoundError } from '@/infra/repos/postgres/helpers';
 import { TransactionNotFoundError } from './errors';
@@ -12,6 +14,7 @@ import { TransactionNotFoundError } from './errors';
 export class PgConnection {
   private static instance?: PgConnection;
   private query?: QueryRunner;
+  private connection?: Connection;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   private constructor() {}
@@ -22,20 +25,21 @@ export class PgConnection {
   }
 
   async connect(): Promise<void> {
-    const connection = getConnectionManager().has('default')
+    this.connection = getConnectionManager().has('default')
       ? getConnection()
       : await createConnection();
-    this.query = connection.createQueryRunner();
   }
 
   async disconnect(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.connection) throw new ConnectionNotFoundError();
     await getConnection().close();
     this.query = undefined;
+    this.connection = undefined;
   }
 
   async openTransaction(): Promise<void> {
-    if (!this.query) throw new ConnectionNotFoundError();
+    if (!this.connection) throw new ConnectionNotFoundError();
+    this.query = this.connection.createQueryRunner();
     this.query?.startTransaction();
   }
 
@@ -55,7 +59,8 @@ export class PgConnection {
   }
 
   getRepository<Entity>(entity: ObjectType<Entity>): Repository<Entity> {
-    if (!this.query) throw new ConnectionNotFoundError();
-    return this.query?.manager.getRepository(entity);
+    if (!this.connection) throw new ConnectionNotFoundError();
+    if (this.query) return this.query.manager.getRepository(entity);
+    return getRepository(entity);
   }
 }

@@ -205,6 +205,18 @@ describe('PgConnection', () => {
     await sut.disconnect();
   });
 
+  it('should get repository from transaction', async () => {
+    await sut.connect();
+    await sut.openTransaction();
+    const repository = sut.getRepository(PgUser);
+
+    expect(getRepositorySpy).toHaveBeenCalledWith(PgUser);
+    expect(getRepositorySpy).toHaveBeenCalledTimes(1);
+    expect(repository).toBe('any_repo');
+
+    await sut.disconnect();
+  });
+
   it('should return ConnectionNotFoundError on getRepository if connection is not found', async () => {
     expect(getRepositorySpy).not.toHaveBeenCalled();
     expect(() => sut.getRepository(PgUser)).toThrow(
