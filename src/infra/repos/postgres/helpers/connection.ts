@@ -56,7 +56,6 @@ export class PgConnection {
 
   getRepository<Entity>(entity: ObjectType<Entity>): Repository<Entity> {
     if (!this.query) throw new ConnectionNotFoundError();
-
     return this.query?.manager.getRepository(entity);
   }
 }
