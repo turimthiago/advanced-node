@@ -8,10 +8,13 @@ import {
   Connection,
   getRepository
 } from 'typeorm';
-import { ConnectionNotFoundError } from '@/infra/repos/postgres/helpers';
-import { TransactionNotFoundError } from './errors';
+import {
+  ConnectionNotFoundError,
+  TransactionNotFoundError
+} from '@/infra/repos/postgres/helpers';
+import { DbTransaction } from '@/application/contracts';
 
-export class PgConnection {
+export class PgConnection implements DbTransaction {
   private static instance?: PgConnection;
   private query?: QueryRunner;
   private connection?: Connection;
