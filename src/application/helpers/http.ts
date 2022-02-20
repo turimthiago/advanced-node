@@ -24,12 +24,12 @@ export const unauthorized = (): HttpResponse<Error> => ({
   data: new UnauthorizedError()
 });
 
-export const serverError = (error: unknown): HttpResponse<Error> => ({
-  statusCode: 500,
-  data: new ServerError(error instanceof Error ? error : undefined)
-});
-
 export const forbidden = (): HttpResponse<Error> => ({
   statusCode: 403,
   data: new ForbiddenError()
+});
+
+export const serverError = (error: unknown): HttpResponse<Error> => ({
+  statusCode: 500,
+  data: new ServerError(error instanceof Error ? error : undefined)
 });
