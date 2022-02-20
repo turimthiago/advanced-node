@@ -1,4 +1,4 @@
-import { mock } from 'jest-mock-extended';
+import { mock, MockProxy } from 'jest-mock-extended';
 
 class DbTransactionController {
   constructor(private readonly dbTransaction: DbTransaction) {}
@@ -13,11 +13,20 @@ interface DbTransaction {
 }
 
 describe('DbTransactionController', () => {
+  let dbTransaction: MockProxy<DbTransaction>;
+  let sut: DbTransactionController;
+
+  beforeAll(() => {
+    dbTransaction = mock();
+  });
+
+  beforeEach(() => {
+    sut = new DbTransactionController(dbTransaction);
+  });
+
   it('should open transaction', async () => {
-    const db = mock<DbTransaction>();
-    const sut = new DbTransactionController(db);
     await sut.perform({ any: 'any' });
-    expect(db.openTransaction).toHaveBeenCalledWith();
-    expect(db.openTransaction).toHaveBeenCalledTimes(1);
+    expect(dbTransaction.openTransaction).toHaveBeenCalledWith();
+    expect(dbTransaction.openTransaction).toHaveBeenCalledTimes(1);
   });
 });
