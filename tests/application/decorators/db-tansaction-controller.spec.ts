@@ -10,11 +10,15 @@ class DbTransactionController {
   async perform(httpRequest: any): Promise<void> {
     await this.dbTransaction.openTransaction();
     await this.decoratee.perform(httpRequest);
+    await this.dbTransaction.commit();
+    await this.dbTransaction.closeTransaction();
   }
 }
 
 interface DbTransaction {
   openTransaction(): Promise<void>;
+  closeTransaction(): Promise<void>;
+  commit(): Promise<void>;
 }
 
 describe('DbTransactionController', () => {
@@ -41,5 +45,13 @@ describe('DbTransactionController', () => {
     await sut.perform({ any: 'any' });
     expect(decoratee.perform).toHaveBeenCalledWith({ any: 'any' });
     expect(decoratee.perform).toHaveBeenCalledTimes(1);
+  });
+
+  it('should call commit end close transaction on success', async () => {
+    await sut.perform({ any: 'any' });
+    expect(dbTransaction.commit).toHaveBeenCalledWith();
+    expect(dbTransaction.commit).toHaveBeenCalledTimes(1);
+    expect(dbTransaction.closeTransaction).toHaveBeenCalledWith();
+    expect(dbTransaction.closeTransaction).toHaveBeenCalledTimes(1);
   });
 });
