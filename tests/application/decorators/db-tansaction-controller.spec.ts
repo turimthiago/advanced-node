@@ -1,34 +1,8 @@
-import { mock, MockProxy } from 'jest-mock-extended';
 import { Controller } from '@/application/controllers';
-import { HttpResponse } from '../helpers';
+import { DbTransactionController } from '@/application/decorators';
+import { DbTransaction } from '@/application/contracts';
 
-class DbTransactionController {
-  constructor(
-    private readonly decoratee: Controller,
-    private readonly dbTransaction: DbTransaction
-  ) {}
-
-  async perform(httpRequest: any): Promise<HttpResponse | undefined> {
-    try {
-      await this.dbTransaction.openTransaction();
-      const httpResponse = await this.decoratee.perform(httpRequest);
-      await this.dbTransaction.commit();
-      return httpResponse;
-    } catch (error) {
-      await this.dbTransaction.rollback();
-      throw error;
-    } finally {
-      await this.dbTransaction.closeTransaction();
-    }
-  }
-}
-
-interface DbTransaction {
-  openTransaction(): Promise<void>;
-  closeTransaction(): Promise<void>;
-  commit(): Promise<void>;
-  rollback(): Promise<void>;
-}
+import { mock, MockProxy } from 'jest-mock-extended';
 
 describe('DbTransactionController', () => {
   let decoratee: MockProxy<Controller>;
@@ -49,6 +23,10 @@ describe('DbTransactionController', () => {
     await sut.perform({ any: 'any' });
     expect(dbTransaction.openTransaction).toHaveBeenCalledWith();
     expect(dbTransaction.openTransaction).toHaveBeenCalledTimes(1);
+  });
+
+  it('should extends Conroller', async () => {
+    expect(sut).toBeInstanceOf(Controller);
   });
 
   it('should execute decoratee', async () => {
